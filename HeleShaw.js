@@ -1,14 +1,18 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const points = [];
-let hovP = null, hovB = null, paused = false;
+let hovP = null, hovB = null, paused = true;
 
 const buttons = [
-    {id: 'sink', x: 1700, y: 70, width: 450, height: 450, text: 'Sinks (Placeholder)'},
-    {id: 'source', x: 1700, y: 950, width: 450, height: 450, text: 'Source(Placeholder)'},
-    {id: 'pause', x: 200, y: 950, width: 450, height: 450, text: 'Pause (Placeholder)'},
-    {id: 'play', x: 800, y: 950, width: 450, height: 450, text: 'Play (Placeholder)'},
+    {id: 'sink', x: 1700, y: 70, width: 450, height: 450, text: 'Sinks (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'clear', x: 1700, y: 650, width: 450, height: 200, text:'Clear (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'source', x: 1700, y: 950, width: 450, height: 450, text: 'Source(Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'pause', x: 200, y: 950, width: 450, height: 450, text: 'Pause (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'play', x: 800, y: 950, width: 450, height: 450, text: 'Play (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'header', x: 1700 , y: 0, width: 450, height: 50, text: 'PAUSED', color1: 'white', color2: 'white'},
 ];
+const head = buttons.find(i => i.id === 'header');
+
 
 // Draws a filled rectangle with an outline
 function drawRect(x, y, width, height, fillColor, strokeColor = null, strokeWidth = null) {
@@ -53,13 +57,15 @@ canvas.addEventListener('mousemove', (e) =>{
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    hovP = null, hovB = null;
-    for(const point of points){
-        const dx = x - point.x;
-        const dy = y - point.y;
-        if(Math.sqrt(dx * dx + dy * dy) <= point.radius){
-            hovP = point;
-            break;
+    if(paused){
+        hovP = null, hovB = null;
+        for(const point of points){
+            const dx = x - point.x;
+            const dy = y - point.y;
+            if(Math.sqrt(dx * dx + dy * dy) <= point.radius){
+                hovP = point;
+                break;
+            }
         }
     }
     for(const button of buttons){
@@ -92,57 +98,67 @@ canvas.addEventListener('click', (e) =>{
 function click(button){
     switch(button.id){
         case 'play':
-        console.log('Play clicked');
-        paused = false;
-        break;
+            console.log('Play clicked');
+            paused = false;
+            break;
         case 'pause':
-        console.log('Pause clicked');
-        paused = true;
-        break;
+            console.log('Pause clicked');
+            paused = true;
+            break;
         case 'sink':
-        console.log('(edit mode) sink clicked');
-        paused = true;
-        break;
+            console.log('(edit mode) sink clicked');
+            paused = true;
+            break;
         case 'source':
-        console.log('(edit mode) source clicked');
-        paused = true;
-        break;
+            console.log('(edit mode) source clicked');
+            paused = true;
+            break;
+        case 'clear':
+            console.log('clear pressed');
+            break;
     }
-
+    drawCanvas();
 }
 
 // Circle Grid in Main Rectangle
 drawCircleGrid(1 + 250, 1 + 40, 10, 10, 90, 90, 20);
 
+//Handles pause/play interactions with buttons
+function pauseHandling(){
+    if(paused){
+        head.text = 'PAUSED';
+        for(const button of buttons){
+                if(button.id == 'pause') button.color1 = 'gray';
+                if(button.id == 'sink' || button.id == 'source' || button.id == 'play'|| button.id == 'clear'){
+                    button.color1 = 'white';
+                    button.color2 = 'lightgray';
+                }
+            }
+    }
+    else{
+        head.text = 'PLAYING';
+        for(const button of buttons){
+                if(button.id == 'pause') button.color1 = 'white';
+                if(button.id == 'play'|| button.id == 'clear'){
+                    button.color1 = 'gray';
+                    button.color2 = 'gray';
+                }
+            }
+    }
+}
 
 function drawCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+    pauseHandling();
     // Hele-Shaw shape
     drawRect(1, 1, 1500, 900, 'gray', 'black', 10);
 
     // Water inlet pipe 
     drawRect(100, 20, 20, 875, 'black');
-    /*
-    // Right Panel Boxes
-    drawRect(1700, 70, 450, 450, 'white');
-    drawCenteredText('Sinks (Placeholder)', 1700, 70, 450, 450);
-
-    drawRect(1700, 950, 450, 450, 'white');
-    drawCenteredText('Source (Placeholder)', 1700, 950, 450, 450);
-
-    // Bottom Middle Box
-    drawRect(200, 950, 450, 450, 'white');
-    drawCenteredText('Pause (Placeholder)', 200, 950, 450, 450);
-
-    //Play button ??
-    drawRect(800, 950, 450, 450, 'white');
-    drawCenteredText('Play (Placeholder)', 800, 950, 450, 450);
-    */
 
     // draw controls/buttons 
    for(const button of buttons){
-        const color = (button === hovB) ? 'lightgray' : 'white';
+        const color = (button === hovB) ? button.color2 : button.color1;
         drawRect(button.x, button.y, button.width,button.height, color);
         drawCenteredText(button.text, button.x, button.y, button.width, button.height);
    }
