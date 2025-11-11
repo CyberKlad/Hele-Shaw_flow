@@ -27,7 +27,7 @@ class Liquid {
 
         // spacing based on above info
         const row_spacing = (right - left) / (rows - 1);
-        const col_spacing = (right - left) / (cols - 1);
+        const col_spacing = (top - bot) / (cols - 1);
 
         // set verts and indices
         this.#verts = [];
