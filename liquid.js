@@ -1,6 +1,6 @@
 class Liquid {
     /*
-    Liquid particle class used for tracking position and path
+    Liquid particle class used for tracking vertices and indices of liquid flow points
     */
 
     // Private variables
@@ -10,19 +10,13 @@ class Liquid {
     #color_offset;
     #vert_offset;
 
-    // Public variables
+    // Public variables (None ATM)
 
-    // Constructor
-    /*
-    in {x} = x coordinate as a float
-    in {y} = float as a float
-    in {direction} = direction in degrees E = 0, N = 90, S = 270. Invalid range 90 - 270 exclusively
-    in {velocity} = velocity as a float 
-    */
     constructor() {
         this.#stride = 7; // number of floats in 1 vertex
         this.#color_offset = 3; // index of first color value
         this.#vert_offset = 0; // index of first vertex value
+
         // 100 x 100 grid point in a window going from -1 to 1 for both x and y
         const rows = 100;
         const cols = 100;
@@ -31,8 +25,10 @@ class Liquid {
         const bot = -1.0;
         const top = 1.0;
 
+        // spacing based on above info
         const row_spacing = (right - left) / (rows - 1);
         const col_spacing = (right - left) / (cols - 1);
+
         // set verts and indices
         this.#verts = [];
         this.#indices = [];
@@ -78,6 +74,7 @@ class Liquid {
 
             let rad = Math.atan2(y_dif, x_dif); // angel of force
             let distance = Math.sqrt(x_dif * x_dif + y_dif * y_dif);
+            // inverse square of distance to calculate force
             let force = 1 * mag / distance * distance;
             this.#verts[vert] += force * Math.cos(rad);
             this.#verts[vert] += force * Math.sin(rad);
@@ -88,12 +85,13 @@ class Liquid {
         const mag = 0.001;
         // iterate over all of the verts
         for (let vert = 0; vert < this.#verts.length; vert += this.#stride) {
-            let x_dif = x - this.#verts[vert];
-            let y_dif = y - this.#verts[vert+1];
+            let x_dif = this.#verts[vert] - x;
+            let y_dif = this.#verts[vert+1] - y;
 
             let rad = Math.atan2(y_dif, x_dif); // angel of force
             let distance = Math.sqrt(x_dif * x_dif + y_dif * y_dif);
-            let force = 1 * mag / distance * distance;
+            // inverse square of distance to calculate force
+            let force = 1 * mag / distance * distance; 
             this.#verts[vert] += force * Math.cos(rad);
             this.#verts[vert] += force * Math.sin(rad);
         }
