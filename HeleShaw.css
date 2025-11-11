@@ -2,7 +2,7 @@ body {
   font-family: sans-serif;
   background-color: #222;
   color: white;
-  text-align: center;
+  text-align: left;
   margin-top: 100px;
 }
 
@@ -14,6 +14,13 @@ button {
   border-radius: 8px;
   cursor: pointer;
 }
+
+.canvas-container {
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 5px; 
+}
+
 button:hover {
   background-color: #666;
 } 
