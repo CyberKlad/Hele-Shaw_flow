@@ -4,12 +4,11 @@ class Liquid {
     */
 
     // Private variables
-    #x;
-    #y;
-    #direction;
-    #velocity;
-    #last_update;
-    #updates
+    #verts; // [x1, y1, z1, r1, g1, b1, a1, x2, y2,..]
+    #indices;
+    #stride;
+    #color_offset;
+    #vert_offset;
 
     // Public variables
 
@@ -20,74 +19,85 @@ class Liquid {
     in {direction} = direction in degrees E = 0, N = 90, S = 270. Invalid range 90 - 270 exclusively
     in {velocity} = velocity as a float 
     */
-    constructor(x, y, direction, velocity){
-        this.#x = [x]; // array to keep track of all previous positions
-        this.#y = [y]; // array to keep track of all previous positions
-        if (direction < 270 && direction > 90) {
-            this.#direction = 0;
-            console.log("Liquid Constructor Warning: invalid direction set. changing to default.");
-        } else this.#direction = direction;
-        if (velocity <= 0) {
-            this.#velocity = 1;
-            console.log("Liquid Constructor Warning: invalid velocity set. changing to default.");
-        } else this.#velocity = velocity;
-        this.#last_update = Date.now();
-        this.#updates = 0;
+    constructor() {
+        this.#stride = 7; // number of floats in 1 vertex
+        this.#color_offset = 3; // index of first color value
+        this.#vert_offset = 0; // index of first vertex value
+        // 100 x 100 grid point in a window going from -1 to 1 for both x and y
+        const rows = 100;
+        const cols = 100;
+        const left = -1.0;
+        const right = 1.0;
+        const bot = -1.0;
+        const top = 1.0;
+
+        const row_spacing = (right - left) / (rows - 1);
+        const col_spacing = (right - left) / (cols - 1);
+        // set verts and indices
+        this.#verts = [];
+        this.#indices = [];
+        for (let row = 0; row < rows; row++) {
+            for (let col = 0; col < cols; col++) {
+                let x = col * row_spacing + left;
+                let y = top - row * col_spacing;
+                this.#verts.push(x, y, 0, 0, 0, 1, 1); // z = 0, RGBA = Blue
+                this.#indices.push(row * cols + col); 
+            }
+            this.#indices.push(0xFFFF); // snip the indices gl.LINE_STRIP
+        }
     }
 
     // Getters
-    getCoord(){
-        return (this.#x, this.#y);
+    getVerts() {
+        return this.#verts;
     }
 
-    getDirection(){
-        return this.#direction;
+    getIndices() {
+        return this.#indices;
     }
 
-    getVelocity(){
-        return this.#velocity;
+    getStride() {
+        return this.#stride * 4; // times 4 for the the bytes in a gl.FLOAT
     }
 
-    getLastUpdate(){
-        return this.#last_update
+    getColorOffset() {
+        return this.#color_offset * 4; // times 4 for the the bytes in a gl.FLOAT
+    }
+
+    getVertOffset() {
+        return this.#vert_offset * 4; // times 4 for the the bytes in a gl.FLOAT
     }
 
     // Class methods
-    update(){
-        // time since last update in seconds
-        let time_delta = (Date.now() - this.#last_update) / 1000.0;
-        let new_x = this.#x[this.#updates] + Math.cos(this.#direction) * this.#velocity * time_delta;
-        let new_y = this.#y[this.#updates] + Math.cos(this.#direction) * this.#velocity * time_delta;
+    addSink(x, y) {
+        const mag = 0.001;
+        // iterate over all of the verts
+        for (let vert = 0; vert < this.#verts.length; vert += this.#stride) {
+            let x_dif = x - this.#verts[vert];
+            let y_dif = y - this.#verts[vert+1];
 
-        this.#last_update = this.#time.getSeconds();
-        this.#updates += 1;
-        this.#x.push(new_x);
-        this.#y.push(new_y);
+            let rad = Math.atan2(y_dif, x_dif); // angel of force
+            let distance = Math.sqrt(x_dif * x_dif + y_dif * y_dif);
+            let force = 1 * mag / distance * distance;
+            this.#verts[vert] += force * Math.cos(rad);
+            this.#verts[vert] += force * Math.sin(rad);
+        }
     }
 
-    // Static functions
-    /*
-    in {start} = x value for all liquid particles
-    in {top} = y value for top of wall
-    in {bot} = y value for bottom of wall
-    in {direction} = direction of every liquid particle
-    in {velocity} = velocity of every liquid particle
-    */
-    static wall(start, top, bot, count, direction, velocity){
-        if (direction < 270 && direction > 90) {
-            console.log("Liquid.wall Error: invalid direction set.");
-            return null;
+    addSource(x, y) {
+        const mag = 0.001;
+        // iterate over all of the verts
+        for (let vert = 0; vert < this.#verts.length; vert += this.#stride) {
+            let x_dif = x - this.#verts[vert];
+            let y_dif = y - this.#verts[vert+1];
+
+            let rad = Math.atan2(y_dif, x_dif); // angel of force
+            let distance = Math.sqrt(x_dif * x_dif + y_dif * y_dif);
+            let force = 1 * mag / distance * distance;
+            this.#verts[vert] += force * Math.cos(rad);
+            this.#verts[vert] += force * Math.sin(rad);
         }
-        if (velocity <= 0) {
-            console.log("Liquid.wall Error: invalid velocity set.");
-            return null;
-        }
-        let liquid_wall = [];
-        let delta = top - bot;
-        for (let i = 0; i < count; i++) {
-            let y = i * delta / (count - 1) + bot;
-            liquid_wall.push(new Liquid(start, y, direction, velocity));
-        }
-        return liquid_wall;
-    }   
+    }
+
+    // Static functions (WIP) 
 }
