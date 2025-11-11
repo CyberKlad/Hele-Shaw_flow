@@ -4,19 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hele-Shaw</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 
  
   <link rel="stylesheet" href="HeleShaw.css">
 
   <style>
     canvas {
-      border: 10px solid black;
+      border: 5px solid black;
     }
   </style>
 </head>
 <body>
-  <canvas id="myCanvas" width="2500" height="2000"></canvas>
-  <script src="HeleShaw.js"></script>
+  <div class="canvas-container">
+    <canvas id="hele-shaw_canvas" width="1500" height="1500"></canvas>
+    <canvas id="interface_canvas" width="800" height="1500"></canvas>
+  </div>
+  <script src="main_canvas.js"></script>
+  <script src="hele-shaw_canvas.js"></script>
 </body>
 </html>
  

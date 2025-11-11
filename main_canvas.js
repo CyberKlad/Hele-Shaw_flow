@@ -1,4 +1,4 @@
-const canvas = document.getElementById('myCanvas');
+const canvas = document.getElementById('interface_canvas');
 const ctx = canvas.getContext('2d');
 const points = [];
 let hovP = null, hovB = null, paused = true;
@@ -151,10 +151,10 @@ function drawCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     pauseHandling();
     // Hele-Shaw shape
-    drawRect(1, 1, 1500, 900, 'gray', 'black', 10);
+    // drawRect(1, 1, 800, 800, 'gray', 'black', 10);
 
     // Water inlet pipe 
-    drawRect(100, 20, 20, 875, 'black');
+    // drawRect(100, 20, 20, 875, 'black');
 
     // draw controls/buttons 
    for(const button of buttons){
@@ -171,3 +171,4 @@ function drawCanvas(){
     }
 }
 
+drawCanvas();
