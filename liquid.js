@@ -18,8 +18,8 @@ class Liquid {
         this.#vert_offset = 0; // index of first vertex value
 
         // 100 x 100 grid point in a window going from -1 to 1 for both x and y
-        const rows = 50;
-        const cols = 1000;
+        const rows = 30;
+        const cols = 1500;
         const left = -1.1;
         const right = 1.1;
         const bot = -1.1;

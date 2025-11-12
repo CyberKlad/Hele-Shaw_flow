@@ -62,10 +62,12 @@ function drawHeleShaw(){
 
 
     // add some sinks and sources
-    Water.addSink(-0.5, 0.5);
-    Water.addSink(-0.5, -0.5);
-    Water.addSource(0.75, 0.5);
-    Water.addSource(0.75, -0.25);
+    for (let i = 0; i < 8; i++){
+        let rand_x = Math.random() * (1.0 - -1.0) + -1.0;
+        let rand_y = Math.random() * (1.0 - -1.0) + -1.0;
+        if (i % 2 == 0) Water.addSink(rand_x, rand_y);
+        else Water.addSource(rand_x, rand_y);
+    }
 
     // Render loop
     function render(now){
