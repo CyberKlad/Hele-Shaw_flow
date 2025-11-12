@@ -30,17 +30,23 @@ class Liquid {
         const col_spacing = (top - bot) / (cols - 1);
 
         // set verts and indices
-        this.#verts = [];
-        this.#indices = [];
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                let x = col * row_spacing + left;
-                let y = top - row * col_spacing;
-                this.#verts.push(x, y, 0, 0, 0, 1, 1); // z = 0, RGBA = Blue
-                this.#indices.push(row * cols + col); 
-            }
-            this.#indices.push(0xFFFF); // snip the indices gl.LINE_STRIP
-        }
+        this.#verts = [
+            -0.5, 0.5, 0, 0, 0, 1, 1,
+            0.5, 0.5, 0, 0, 0, 1, 1,
+            0.5, -0.5, 0, 0, 0, 1, 1,
+            -0.5, -0.5, 0, 0, 0, 1, 1,
+            -0.5, 0.5, 0, 0, 0, 1, 1,
+        ];
+        this.#indices = [0, 1, 2, 3];
+        // for (let row = 0; row < rows; row++) {
+        //     for (let col = 0; col < cols; col++) {
+        //         let x = col * row_spacing + left;
+        //         let y = top - row * col_spacing;
+        //         this.#verts.push(x, y, 0, 0, 0, 1, 1); // z = 0, RGBA = Blue
+        //         this.#indices.push(row * cols + col); 
+        //     }
+        //     this.#indices.push(0xFFFF); // snip the indices gl.LINE_STRIP
+        // }
     }
 
     // Getters
@@ -95,6 +101,30 @@ class Liquid {
             this.#verts[vert] += force * Math.cos(rad);
             this.#verts[vert] += force * Math.sin(rad);
         }
+    }
+
+    createAndLoadVertex(gpu) {
+        let current_buffer = gpu.getParameter(gpu.ARRAY_BUFFER_BINDING);
+    
+        let handle = gpu.createBuffer();
+        gpu.bindBuffer(gpu.ARRAY_BUFFER, handle);
+        gpu.bufferData(gpu.ARRAY_BUFFER, new Float32Array(this.#verts), gpu.STATIC_DRAW);
+
+        gpu.bindBuffer(gpu.ARRAY_BUFFER, current_buffer);
+
+        return handle;     
+    }
+
+    createAndLoadIndices(gpu) {
+        let current_buffer = gpu.getParameter(gpu.ELEMENT_ARRAY_BUFFER_BINDING);
+    
+        let handle = gpu.createBuffer();
+        gpu.bindBuffer(gpu.ELEMENT_ARRAY_BUFFER, handle);
+        gpu.bufferData(gpu.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.#indices), gpu.STATIC_DRAW);
+
+        gpu.bindBuffer(gpu.ELEMENT_ARRAY_BUFFER, current_buffer);
+
+        return handle;    
     }
 
     // Static functions (WIP) 
