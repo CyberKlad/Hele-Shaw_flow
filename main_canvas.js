@@ -2,14 +2,15 @@ const canvas = document.getElementById('interface_canvas');
 const ctx = canvas.getContext('2d');
 const points = [];
 let hovP = null, hovB = null, paused = true;
+window.placeMode = 'idle';
 
 const buttons = [
-    {id: 'sink', x: 1700, y: 70, width: 450, height: 450, text: 'Sinks (Placeholder)', color1: 'white', color2: 'lightgray'},
-    {id: 'clear', x: 1700, y: 650, width: 450, height: 200, text:'Clear (Placeholder)', color1: 'white', color2: 'lightgray'},
-    {id: 'source', x: 1700, y: 950, width: 450, height: 450, text: 'Source(Placeholder)', color1: 'white', color2: 'lightgray'},
-    {id: 'pause', x: 200, y: 950, width: 450, height: 450, text: 'Pause (Placeholder)', color1: 'white', color2: 'lightgray'},
-    {id: 'play', x: 800, y: 950, width: 450, height: 450, text: 'Play (Placeholder)', color1: 'white', color2: 'lightgray'},
-    {id: 'header', x: 1700 , y: 0, width: 450, height: 50, text: 'PAUSED', color1: 'white', color2: 'white'},
+    {id: 'sink', x: 50, y: 800, width: 350, height: 120, text: 'Sinks (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'clear', x: 50, y: 1100, width: 350, height: 80, text:'Clear (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'source', x: 425, y: 800, width: 350, height: 120, text: 'Source(Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'pause', x: 425, y: 950, width: 350, height: 120, text: 'Pause (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'play', x: 50, y: 950, width: 350, height: 120, text: 'Play (Placeholder)', color1: 'white', color2: 'lightgray'},
+    {id: 'header', x: 95 , y: 20, width: 600, height: 50, text: 'PAUSED', color1: 'white', color2: 'white'},
 ];
 const head = buttons.find(i => i.id === 'header');
 
@@ -48,7 +49,7 @@ function drawCircleGrid(startX, startY, cols, rows, gapX, gapY, radius) {
             ctx.arc(x, y, radius, 0, Math.PI * 2);
             ctx.fillStyle = 'white';
             ctx.fill();
-            points.push({x, y, radius});
+            points.push({x, y, radius, state: 'none', row, col});
         }
     }
 }
@@ -108,10 +109,12 @@ function click(button){
         case 'sink':
             console.log('(edit mode) sink clicked');
             paused = true;
+            window.placeMode = (window.placeMode === 'sink') ? 'idle' : 'sink';
             break;
         case 'source':
             console.log('(edit mode) source clicked');
             paused = true;
+            window.placeMode = (window.placeMode === 'source') ? 'idle' : 'source';
             break;
         case 'clear':
             console.log('clear pressed');
@@ -121,7 +124,7 @@ function click(button){
 }
 
 // Circle Grid in Main Rectangle
-drawCircleGrid(1 + 250, 1 + 40, 10, 10, 90, 90, 20);
+drawCircleGrid(100, 100, 10, 10, 65, 65, 20);
 
 //Handles pause/play interactions with buttons
 function pauseHandling(){
@@ -166,9 +169,24 @@ function drawCanvas(){
     for (const point of points) {
         ctx.beginPath();
         ctx.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
-        ctx.fillStyle = (point === hovP) ? 'yellow' : 'white'; // hovered circle yellow
+
+        if (point.state === 'source') {
+            ctx.fillStyle = 'blue';        // source = blue
+        } else if (point.state === 'sink') {
+            ctx.fillStyle = 'red';         // sink = red
+        } else {
+            ctx.fillStyle = (point === hovP) ? 'yellow' : 'white'; // hover or empty
+        }
+
         ctx.fill();
     }
+
 }
 
 drawCanvas();
+
+window.points = points;
+window.buttons = buttons;
+window.drawCanvas = drawCanvas;
+
+

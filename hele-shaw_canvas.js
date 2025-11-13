@@ -1,6 +1,8 @@
+window.Water = null;
+
 function drawHeleShaw(){
     // create liquid
-    let Water = new Liquid();
+    Water = new Liquid();
 
     let hs_canvas = document.getElementById('hele-shaw_canvas');
     let hs = hs_canvas.getContext('webgl2');
@@ -52,6 +54,9 @@ function drawHeleShaw(){
     // select program
     hs.useProgram(program);
 
+    //liquid inserts 0xFFFF so this makes WebGL break LINE_STRIP between rows on grid
+    hs.enable(hs.PRIMITIVE_RESTART_FIXED_INDEX);
+
     // bind indices
     hs.bindBuffer( hs.ELEMENT_ARRAY_BUFFER, Water.createAndLoadIndices(hs));
 
@@ -61,13 +66,14 @@ function drawHeleShaw(){
     hs.enable( hs.BLEND );
 
 
-    // add some sinks and sources
-    for (let i = 0; i < 8; i++){
-        let rand_x = Math.random() * (1.0 - -1.0) + -1.0;
-        let rand_y = Math.random() * (1.0 - -1.0) + -1.0;
-        if (i % 2 == 0) Water.addSink(rand_x, rand_y);
-        else Water.addSource(rand_x, rand_y);
-    }
+    // UNCOMMENT FOR RANDOM SOURCE AND SINKS ON STARTUP (probably for demo)
+    // // add some sinks and sources
+    // for (let i = 0; i < 4; i++){
+    //     let rand_x = Math.random() * (1.0 - -1.0) + -1.0;
+    //     let rand_y = Math.random() * (1.0 - -1.0) + -1.0;
+    //     if (i % 2 == 0) Water.addSink(rand_x, rand_y);
+    //     else Water.addSource(rand_x, rand_y);
+    // }
 
     // Render loop
     function render(now){
