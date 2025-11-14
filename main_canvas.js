@@ -117,8 +117,16 @@ function click(button){
             window.placeMode = (window.placeMode === 'source') ? 'idle' : 'source';
             break;
         case 'clear':
-            console.log('clear pressed');
-            break;
+            if(paused){
+                console.log('clear pressed');
+                for(const point of points){
+                    point.state= 'none';
+                }
+                window.placeMode = 'idle';
+                window.Water = null;
+                drawHeleShaw();
+                break;
+            }
     }
     drawCanvas();
 }
@@ -154,11 +162,6 @@ function drawCanvas(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     pauseHandling();
     // Hele-Shaw shape
-    // drawRect(1, 1, 800, 800, 'gray', 'black', 10);
-
-    // Water inlet pipe 
-    // drawRect(100, 20, 20, 875, 'black');
-
     // draw controls/buttons 
    for(const button of buttons){
         const color = (button === hovB) ? button.color2 : button.color1;
