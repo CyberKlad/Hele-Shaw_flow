@@ -21,6 +21,19 @@ class ViewController: UIViewController {
         
     }
 
-
+    @IBAction func RemoveLater(_ sender: Any) {
+        print("working");
+        let sinks: [(Float64, Float64, Float64)] = [];
+        let sources: [(Float64, Float64, Float64)] = [(1.0,1.0,1.0), (3.0, 3.0, 1.0)];
+        let stream: (Float64, Float64) = (1.0, 0.0);
+        let start: (Float64, Float64) = (0.0, 2.0);
+        let end: Float64 = 5.0;
+        let step: Float64 = 0.5;
+        let streamline = GenStreamLine(sources: sources, sinks: sinks, stream: stream, start: start, end: end, step: step)
+        for point in streamline {
+            print("\(point)");
+        }
+    }
+    
 }
 
