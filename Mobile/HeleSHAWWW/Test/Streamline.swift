@@ -33,7 +33,7 @@ func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
     
     // variables for tracking issue and limiting run time
     var probDetect: Bool = false;
-    var stepLim = 1000;
+    var stepLim = 2 * end / step;
     
     // loop until the streamline has gone out of our window start.0 (the starting X) - end
     while (current.0 < end && stepLim > 0) {
@@ -42,6 +42,7 @@ func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
         // set initial velocities to the stream provided
         var xVelocity: Float64 = stream.0;
         var yVelocity: Float64 = stream.1;
+        //print("Initial V in the x and y dir: \(xVelocity), \(yVelocity)");
         
         // loop through sources adding their value to the velocity
         for source in sources {
@@ -50,6 +51,7 @@ func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
             let yDistance: Float64 = current.1 - source.1;
             xVelocity += ( strength * xDistance ) / ( 2 * pi * ( pow(xDistance, 2) + pow(yDistance, 2)));
             yVelocity += ( strength * yDistance ) / ( 2 * pi * ( pow(xDistance, 2) + pow(yDistance, 2)));
+            //print("V in the x and y dir after source \(source.0), \(source.1): \(xVelocity), \(yVelocity)");
             
             // check for divide by zero
             if (yVelocity.isNaN || xVelocity.isNaN) {
@@ -73,6 +75,7 @@ func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
             let yDistance: Float64 = current.1 - sink.1;
             xVelocity -= ( strength * xDistance ) / ( 2 * pi * ( pow(xDistance, 2) + pow(yDistance, 2)));
             yVelocity -= ( strength * yDistance ) / ( 2 * pi * ( pow(xDistance, 2) + pow(yDistance, 2)));
+            //print("V in the x and y dir after sink \(sink.0), \(sink.1): \(xVelocity), \(yVelocity)");
             
             // check for divide by zero
             if (yVelocity.isNaN || xVelocity.isNaN) {
