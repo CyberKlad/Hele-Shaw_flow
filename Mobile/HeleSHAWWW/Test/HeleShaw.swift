@@ -7,39 +7,134 @@
 
 import UIKit
 
-final class HeleShawGrid:UIView{
-    var startX: CGFloat = 20
-    var startY: CGFloat = 20
+class HeleShawGrid: UIView {
+
+    //number of columns and rows for background, radius is the radius of background grey circles
     var cols: Int = 10
-    var rows: Int = 6
-    var gapX: CGFloat = 30
-    var gapY: CGFloat = 30
-    var radius:CGFloat = 6
-    
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        backgroundColor = .black
-        isOpaque = false
-        
-        layer.borderWidth = 3
-        layer.borderColor = UIColor.black.cgColor
+    var rows: Int = 10
+    var radius: CGFloat = 5
+
+    //used to draw the grid and streamlines
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+
+        let context = UIGraphicsGetCurrentContext()
+        if context == nil {
+            return
+        }
+
+        drawBackgroundGrid(context: context!)
+        drawStreamlines()
     }
-    
-    override func draw(_ rect: CGRect){
-        guard let ctx = UIGraphicsGetCurrentContext() else {return}
-        
-        ctx.setFillColor(UIColor.white.cgColor)
-        
-        for row in 0..<rows{
-            for col in 0..<cols{
-                let x = startX + CGFloat(col) * gapX
-                let y = startY + CGFloat(row) * gapY
-                let r = radius
-                
-                let circleRect = CGRect(x: x - r, y: y - r, width: 2*r, height: 2*r)
-                ctx.fillEllipse(in: circleRect)
+
+    //draw grey background circles
+    func drawBackgroundGrid(context: CGContext) {
+        let spacingX = bounds.width / CGFloat(cols + 1)
+        let spacingY = bounds.height / CGFloat(rows + 1)
+
+        UIColor.gray.setFill()
+
+        for row in 0..<rows {
+            for col in 0..<cols {
+                let x = spacingX * CGFloat(col + 1)
+                let y = spacingY * CGFloat(row + 1)
+
+                let circleRect = CGRect(x: x - radius,
+                                        y: y - radius,
+                                        width: radius * 2,
+                                        height: radius * 2)
+
+                context.fillEllipse(in: circleRect)
             }
         }
-        
+    }
+//function used to draw sources and sinks only on grid points, not sure if we need that or not
+//    func gridPoint(col: Int, row: Int) -> (Float64, Float64) {
+//        let spacingX = bounds.width / CGFloat(cols + 1)
+//        let spacingY = bounds.height / CGFloat(rows + 1)
+//
+//        let x = spacingX * CGFloat(col + 1)
+//        let y = spacingY * CGFloat(row + 1)
+//
+//        return (Float64(x), Float64(y))
+//    }
+
+    //calls korbin's function to draw the streamlines. I have some random sources and sinks for now.
+    func drawStreamlines() {
+        let spacingX = bounds.width / CGFloat(cols + 1)
+        let spacingY = bounds.height / CGFloat(rows + 1)
+
+        let leftX = Float64(spacingX)
+        let rightX = Float64(spacingX * CGFloat(cols))
+        let topY = Float64(spacingY)
+
+        let sinks: [(Float64, Float64, Float64)] = []
+
+        let x1 = Float64(spacingX * 3)
+        let y1 = Float64(spacingY * 4)
+
+        let x2 = Float64(spacingX * 5)
+        let y2 = Float64(spacingY * 5)
+
+        let x3 = Float64(spacingX * 8)
+        let y3 = Float64(spacingY * 3)
+
+        let x4 = Float64(spacingX * 10)
+        let y4 = Float64(spacingY * 4)
+
+        let sources: [(Float64, Float64, Float64)] = [
+            (x1, y1, 6.0),
+            (x2, y2, -7.0),
+            (x3, y3, 8.0),
+            (x4, y4, 5.0)
+        ]
+
+        //the 0.2 is the strength of the flow. Higher numbers mean less impact from sources and sinks and straighter lines
+        let stream: (Float64, Float64) = (0.2, 0.0)
+        let end: Float64 = rightX
+        let step: Float64 = 0.1
+
+        let numberOfLines = rows
+
+        for i in 0..<numberOfLines {
+            let startY = topY + (Float64(i) * Float64(spacingY))
+            let start: (Float64, Float64) = (leftX, startY)
+
+            let points = GenStreamLine(
+                sources: sources,
+                sinks: sinks,
+                stream: stream,
+                start: start,
+                end: end,
+                step: step
+            )
+
+            drawOneStreamline(points: points)
+        }
+    }
+
+    //connects all the points with a line
+    func drawOneStreamline(points: [(Float64, Float64)]) {
+        if points.count == 0 {
+            return
+        }
+
+        let path = UIBezierPath()
+        path.lineWidth = 2.0
+
+        let firstX = points[0].0
+        let firstY = points[0].1
+
+        path.move(to: CGPoint(x: firstX, y: firstY))
+
+        for i in 1..<points.count {
+            let x = points[i].0
+            let y = points[i].1
+            let nextPoint = CGPoint(x: x, y: y)
+            path.addLine(to: nextPoint)
+        }
+
+        UIColor.blue.setStroke()
+        path.stroke()
     }
 }
