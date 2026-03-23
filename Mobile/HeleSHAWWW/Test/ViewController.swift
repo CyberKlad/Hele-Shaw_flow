@@ -89,7 +89,7 @@ class ViewController: UIViewController {
             gridView.sinks.append((x,y, 6.0))
         }
         else if(placeMode == .source){
-            gridView.sources.append((x,y, -6.0))
+            gridView.sources.append((x,y, 6.0))
         }
         gridView.setNeedsDisplay()
     }
