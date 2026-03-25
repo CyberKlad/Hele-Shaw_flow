@@ -18,8 +18,8 @@ func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
     // set strength to 1 will be changed for each source and sink
     var strength : Float64 = 1;
     
-    // damper will be used to tweak the effectiveness of the strength
-    let damper : Float64 = 1.0;
+    // mScale is CGPoints per mm
+    let mmScale : Float64 = 0.0393701 * Float64(UIScreen.main.scale * 163.0); // dont remove deprecated function
     
     // make pi a variable for easier typing
     let pi: Float64 = Float64.pi;
@@ -40,13 +40,13 @@ func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
         stepLim -= 1;
         
         // set initial velocities to the stream provided
-        var xVelocity: Float64 = stream.0;
-        var yVelocity: Float64 = stream.1;
+        var xVelocity: Float64 = stream.0 * mmScale;
+        var yVelocity: Float64 = stream.1 * mmScale;
         //print("Initial V in the x and y dir: \(xVelocity), \(yVelocity)");
         
         // loop through sources adding their value to the velocity
         for source in sources {
-            strength = source.2 / damper;
+            strength = source.2 * mmScale * mmScale;
             let xDistance: Float64 = current.0 - source.0;
             let yDistance: Float64 = current.1 - source.1;
             xVelocity += ( strength * xDistance ) / ( 2 * pi * ( pow(xDistance, 2) + pow(yDistance, 2)));
@@ -70,7 +70,7 @@ func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
         
         // loop through sinks subtracting their value from the velocity
         for sink in sinks {
-            strength = sink.2 / damper;
+            strength = sink.2 * mmScale * mmScale;
             let xDistance: Float64 = current.0 - sink.0;
             let yDistance: Float64 = current.1 - sink.1;
             xVelocity -= ( strength * xDistance ) / ( 2 * pi * ( pow(xDistance, 2) + pow(yDistance, 2)));

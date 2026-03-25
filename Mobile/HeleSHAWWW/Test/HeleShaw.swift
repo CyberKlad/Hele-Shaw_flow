@@ -83,16 +83,16 @@ class HeleShawGrid: UIView {
         let y4 = Float64(spacingY * 4)
 
         let sources: [(Float64, Float64, Float64)] = [
-            (x1, y1, 6.0),
-            (x2, y2, -7.0),
-            (x3, y3, 8.0),
-            (x4, y4, 5.0)
+            (x1, y1, 60.0),
+            (x2, y2, -70.0),
+            (x3, y3, 80.0),
+            (x4, y4, 50.0)
         ]
 
         //the 0.2 is the strength of the flow. Higher numbers mean less impact from sources and sinks and straighter lines
-        let stream: (Float64, Float64) = (0.2, 0.0)
+        let stream: (Float64, Float64) = (5, 0.0)
         let end: Float64 = rightX
-        let step: Float64 = 0.1
+        let step: Float64 = bounds.width / 10000.0
 
         let numberOfLines = rows
 
