@@ -136,7 +136,6 @@ class HeleShawGrid: UIView {
         }
     }
 
-
     //connects all the points with a line
     func drawOneStreamline(points: [(Float64, Float64)]) {
         if points.count == 0 {

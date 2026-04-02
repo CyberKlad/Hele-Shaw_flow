@@ -24,6 +24,8 @@ class ViewController: UIViewController {
     
     var isPaused = true
     var placeMode: PlaceMode = .none
+    @IBOutlet weak var slider: UISlider!
+    @IBOutlet weak var ValueLable: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,7 +60,27 @@ class ViewController: UIViewController {
     @IBAction func sinkButtonPressed(_ sender: Any) {
         print("sink pressed")
         placeMode = .sink
+        let tap = UITapGestureRecognizer(target: self,action: #selector(screenTap))
+        gridView.isUserInteractionEnabled = true
+        gridView.addGestureRecognizer(tap)
         
+        slider.minimumValue = 0
+        slider.maximumValue = 100
+        
+        slider.addTarget(self, action: #selector(sliderChange(_:)), for: .valueChanged)
+        slider.addTarget(self, action: #selector(sliderChange(_:)), for: .valueChanged)
+        
+        
+    }
+    
+    
+    @objc func screenTap() {
+        gridView.backgroundColor = randomColor() //Change later this is for testing 
+        
+        }
+    
+    @objc func sliderChange(_ sender: UISlider){
+        ValueLable.text="\(Int (sender.value))%"
     }
     
     @IBAction func clearButtonPressed(_ sender: Any) {
@@ -93,6 +115,17 @@ class ViewController: UIViewController {
         }
         gridView.setNeedsDisplay()
     }
+        func randomColor() -> UIColor{
+            return UIColor(
+           red:CGFloat.random(in: 0...1),
+            green:CGFloat.random(in: 0...1),
+            blue:CGFloat.random(in: 0...1),
+            alpha: 1.0
+            )
+            
+    }
+    
+    
     @IBAction func RemoveLater(_ sender: Any) {
         let sinks: [(Float64, Float64, Float64)] = [];
         let sources: [(Float64, Float64, Float64)] = [(2.0, 4.0, -2.0), (4.0, 5.0, -1.0), (1.0,2.0,1.0), (4.0, 3.0, 2.0)];
@@ -107,4 +140,3 @@ class ViewController: UIViewController {
     }
     
 }
-
