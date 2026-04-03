@@ -34,6 +34,8 @@ class ViewController: UIViewController {
         gridView.radius = 5
         gridView.setNeedsDisplay();
         
+        ValueLable.text="\(Int (slider.value))mm²/s"
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(gridPress(_:)))
         gridView.addGestureRecognizer(tapGesture)
         gridView.isUserInteractionEnabled = true
@@ -79,8 +81,8 @@ class ViewController: UIViewController {
         
         }
     
-    @objc func sliderChange(_ sender: UISlider){
-        ValueLable.text="\(Int (sender.value))%"
+    @IBAction func sliderChange(_ sender: Any) {
+        ValueLable.text="\(Int (slider.value))mm²/s"
     }
     
     @IBAction func clearButtonPressed(_ sender: Any) {
