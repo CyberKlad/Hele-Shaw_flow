@@ -32,6 +32,13 @@ class HeleShawGrid: UIView {
             drawStreamlines()
         }
     }
+    
+    // this redraws when screen is rotated so that distortion doesnt happen
+    override var bounds: CGRect {
+        didSet {
+            setNeedsDisplay();
+        }
+    }
 
     //draw grey background circles
     func drawBackgroundGrid(context: CGContext) {
@@ -84,11 +91,12 @@ class HeleShawGrid: UIView {
 
     //calls korbin's function to draw the streamlines. I have some random sources and sinks for now.
     func drawStreamlines() {
-        let spacingX = bounds.width / CGFloat(cols + 1)
+        // never used?
+        // let spacingX = bounds.width / CGFloat(cols + 1)
         let spacingY = bounds.height / CGFloat(rows + 1)
 
-        let leftX = Float64(spacingX)
-        let rightX = Float64(spacingX * CGFloat(cols))
+        let leftX = 0.0
+        let rightX = bounds.width
         let topY = Float64(spacingY)
 /*
         let sinks: [(Float64, Float64, Float64)] = []

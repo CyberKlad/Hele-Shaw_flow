@@ -36,7 +36,7 @@
                                 <rect key="frame" x="464" y="40" width="448" height="34.5"/>
                                 <color key="tintColor" systemColor="systemMintColor"/>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Pause/Play"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Play"/>
                                 <connections>
                                     <action selector="playButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dcj-gu-PNT"/>
                                 </connections>
@@ -60,7 +60,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Strength" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nJQ-dE-M1k">
-                                <rect key="frame" x="1051" y="35" width="66" height="21"/>
+                                <rect key="frame" x="1051" y="40" width="66" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -93,6 +93,7 @@
                             <constraint firstItem="nJQ-dE-M1k" firstAttribute="centerX" secondItem="GXS-L5-8oW" secondAttribute="centerX" id="5Ix-4e-kTX"/>
                             <constraint firstItem="SJL-El-QM0" firstAttribute="leading" secondItem="agj-ZL-Loc" secondAttribute="leading" id="8BM-dK-w75"/>
                             <constraint firstItem="SJL-El-QM0" firstAttribute="trailing" secondItem="agj-ZL-Loc" secondAttribute="trailing" id="8Ns-l8-M7e"/>
+                            <constraint firstItem="nJQ-dE-M1k" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="8" id="9ID-We-CsQ"/>
                             <constraint firstItem="f5q-RB-Zre" firstAttribute="top" secondItem="GXS-L5-8oW" secondAttribute="top" id="Aym-M2-jEu"/>
                             <constraint firstItem="P9V-0Q-8wr" firstAttribute="trailing" secondItem="2UO-X2-eUH" secondAttribute="trailing" id="B8M-3c-vwg"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="f5q-RB-Zre" secondAttribute="trailing" constant="8" id="Bgb-wq-tUQ"/>
@@ -123,6 +124,7 @@
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="I5U-up-y3R"/>
+                                <exclude reference="yXH-RG-gCG"/>
                                 <exclude reference="VOW-L6-S1E"/>
                             </mask>
                         </variation>
