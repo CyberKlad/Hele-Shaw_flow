@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var playpauseButton: UIButton!
     @IBOutlet weak var clearButton: UIButton!
     
-    var isPaused = true
+    var isPaused = true;
     var placeMode: PlaceMode = .none
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var ValueLable: UILabel!
@@ -32,7 +32,7 @@ class ViewController: UIViewController {
         gridView.cols = 12
         gridView.rows = 8
         gridView.radius = 5
-        gridView.setNeedsDisplay()
+        gridView.setNeedsDisplay();
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(gridPress(_:)))
         gridView.addGestureRecognizer(tapGesture)
