@@ -130,10 +130,14 @@ class HeleShawGrid: UIView {
         let end: Float64 = rightX
         let step: Float64 = 0.1
 
-        let numberOfLines = rows
+        let linesPerRow = 3
+        let numberOfLines = rows * linesPerRow + linesPerRow
+        let lineSpacing = Float64(spacingY) / Float64(linesPerRow)
+
+
 
         for i in 0..<numberOfLines {
-            let startY = topY + (Float64(i) * Float64(spacingY))
+            let startY = topY - Float64(spacingY) + (Float64(i) * lineSpacing) + (lineSpacing / 2.0)
             let start: (Float64, Float64) = (leftX, startY)
 
             let points = GenStreamLine(
