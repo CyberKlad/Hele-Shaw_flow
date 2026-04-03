@@ -17,10 +17,11 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var gridView: HeleShawGrid!
-    @IBOutlet weak var sourceButton: UIButton!
-    @IBOutlet weak var sinkButton: UIButton!
-    @IBOutlet weak var playpauseButton: UIButton!
-    @IBOutlet weak var clearButton: UIButton!
+    // these arent being used
+//    @IBOutlet weak var sourceButton: UIButton!
+//    @IBOutlet weak var sinkButton: UIButton!
+//    @IBOutlet weak var playpauseButton: UIButton!
+//    @IBOutlet weak var clearButton: UIButton!
     
     var isPaused = true;
     var placeMode: PlaceMode = .none
@@ -29,6 +30,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        slider.minimumValue = 0
+        slider.maximumValue = 100
+        
         gridView.cols = 12
         gridView.rows = 8
         gridView.radius = 5
@@ -62,9 +66,7 @@ class ViewController: UIViewController {
     @IBAction func sinkButtonPressed(_ sender: Any) {
         print("sink pressed")
         placeMode = .sink
-        let tap = UITapGestureRecognizer(target: self,action: #selector(screenTap))
         gridView.isUserInteractionEnabled = true
-        gridView.addGestureRecognizer(tap)
         
         slider.minimumValue = 0
         slider.maximumValue = 100
@@ -75,11 +77,6 @@ class ViewController: UIViewController {
         
     }
     
-    
-    @objc func screenTap() {
-        gridView.backgroundColor = randomColor() //Change later this is for testing 
-        
-        }
     
     @IBAction func sliderChange(_ sender: Any) {
         ValueLable.text="\(Int (slider.value))mm²/s"
@@ -104,26 +101,18 @@ class ViewController: UIViewController {
         }
         
         let place = gridView.gridPoint(col: col, row: row)
-        let x = place.0
-        let y = place.1
+        //let x = place.0
+        //let y = place.1
         
-        //let x = Float64(point.x)
-       // let y = Float64(point.y)
+        let x: Float64 = point.x
+        let y: Float64 = point.y
+        let q: Float64 = Float64(slider.value)
         if(placeMode == .sink){
-            gridView.sinks.append((x,y, 6.0))
+            gridView.sinks.append((x,y,q))
         }
         else if(placeMode == .source){
-            gridView.sources.append((x,y, 6.0))
+            gridView.sources.append((x,y,q))
         }
         gridView.setNeedsDisplay()
     }
-        func randomColor() -> UIColor{
-            return UIColor(
-           red:CGFloat.random(in: 0...1),
-            green:CGFloat.random(in: 0...1),
-            blue:CGFloat.random(in: 0...1),
-            alpha: 1.0
-            )
-            
-    }    
 }

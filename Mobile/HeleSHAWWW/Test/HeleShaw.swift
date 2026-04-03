@@ -44,8 +44,9 @@ class HeleShawGrid: UIView {
     func drawBackgroundGrid(context: CGContext) {
         let spacingX = bounds.width / CGFloat(cols + 1)
         let spacingY = bounds.height / CGFloat(rows + 1)
-
-        UIColor.gray.setFill()
+        
+        // very low alpha black
+        UIColor(red: 0, green: 0, blue: 0, alpha: 0.2).setFill()
 
         for row in 0..<rows {
             for col in 0..<cols {
@@ -63,18 +64,22 @@ class HeleShawGrid: UIView {
     }
     
     func drawPoints(context: CGContext){
+        var newRadius: CGFloat = radius;
+        
         UIColor.blue.setFill()
         for source in sources {
+            newRadius = radius * source.2 * 0.05;
             let x = CGFloat(source.0)
             let y = CGFloat(source.1)
-            let circlePoint = CGRect(x: x - radius, y: y - radius, width: radius*2, height: radius*2)
+            let circlePoint = CGRect(x: x - newRadius, y: y - newRadius, width: newRadius*2, height: newRadius*2)
             context.fillEllipse(in: circlePoint)
         }
         UIColor.red.setFill()
         for sink in sinks {
+            newRadius = radius * sink.2 * 0.05;
             let x  = CGFloat(sink.0)
             let y = CGFloat(sink.1)
-            let circlePoint = CGRect(x: x - radius, y: y - radius, width: radius*2, height: radius*2)
+            let circlePoint = CGRect(x: x - newRadius, y: y - newRadius, width: newRadius*2, height: newRadius*2)
             context.fillEllipse(in: circlePoint)
         }
     }
@@ -121,7 +126,7 @@ class HeleShawGrid: UIView {
         ]
 */
         //the 0.2 is the strength of the flow. Higher numbers mean less impact from sources and sinks and straighter lines
-        let stream: (Float64, Float64) = (0.2, 0.0)
+        let stream: (Float64, Float64) = (10.0, 0.0)
         let end: Float64 = rightX
         let step: Float64 = 0.1
 
