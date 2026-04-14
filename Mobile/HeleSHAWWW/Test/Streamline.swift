@@ -7,6 +7,70 @@
 
 import SwiftUI
 
+// define some consistantly used variables that should not be caculated every function call
+fileprivate let _screenscale: Float64 = 0.0393701 * 2.0 * 163.0; // this is an estimated scale from mm to PPI
+
+
+func genStreamline(flowpoints: [FlowPoint], stream: Vec2, start: Vec2, end: Float64, step: Float64) -> [Vec2] {
+    // initialize path and allowable steps
+    var path: [Vec2] = [start];
+    var stepsRemaining: Int = 2 * Int(end / step);
+    
+    // loop until path goes past the end value or allowable steps have been exhausted
+    while (path.last.x < end && stepsRemaining > 0) {
+        // lower stepsRemaining
+        stepsRemaining -= 1;
+        
+        // start with V-inifite scaling stream from m/s to PPI/s
+        var xVelocity: Float64 = stream.x * _screenscale;
+        var yVelocity: Float64 = stream.y * _screenscale;
+        
+        // add flowpoint influence
+        for flowpoint in flowpoints {
+            // convert strength from mm^2/s to PPI^2/s
+            let strength = flowpoint.strength * _screenscale * _screenscale;
+            
+            // calculate distance
+            let xDistance: Float64 = path.last.x - flowpoint.x;
+            let yDistance: Float64 = path.last.y - flowpoint.y;
+            
+            // calculate denominator
+            let denominator: Float64 = 2 * Float64.pi * ( xDistance * xDistance + yDistance * yDistance);
+            
+            // sum influence
+            xVelocity += ( strength * xDistance ) / denominator;
+            yVelocity += ( strength * yDistance ) / denominator;
+        }
+        
+        // calculate hypotenuse
+        let vHypotenuse: Float64 = sqrt(xVelocity * xVelocity + yVelocity * yVelocity) / step;
+        
+        // scale velocities
+        xVelocity /= vHypotenuse;
+        yVelocity /= vHypotenuse;
+        
+        // Check for bad numbers in math. if there is, take a false step and print a warning
+        if (xVelocity.isInfinite || yVelocity.isInfinite || xVelocity.isNaN || yVelocity.isNaN) {
+            print("Warning: math at \(path.last.x), \(path.last.y) broke. Taking false step forward of size \(step).");
+            path.append(Vec2(x: path.last.x + step, y: path.last.y));
+            continue;
+        } else {
+            // else take true step
+            path.append(Vec2(x: path.last.x + xVelocity, y: path.last.y + yVelocity));
+        }
+        
+        // check for stagnet movement by taking the delta over the last 9 steps
+        if (path.count % 10 == 9){
+            if (abs(path.last.x - path[path.count - 9].x) < step &&
+                abs(path.last.y - path[path.count - 9].y) < step) {
+                break;
+            }
+        }
+    }
+    return path;
+}
+
+// depricated function use genStreamline(flowpoints, stream, start, end, step);
 func GenStreamLine(sources: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
                    sinks: [(Float64, Float64, Float64)], // [(X, Y, Strength)]
                    stream: (Float64, Float64), // the vector defining default stream
