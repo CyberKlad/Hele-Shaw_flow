@@ -8,6 +8,8 @@
 //  Created by Kyle Cornford on 4/5/26.
 //
 
+import SwiftUI
+
 // Vec2 struct for 2D vector (Double-precision)
 struct Vec2 {
     var x: Double // In Swift, Double is equivalent to Float64
