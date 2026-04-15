@@ -17,7 +17,7 @@ func genStreamline(flowpoints: [FlowPoint], stream: Vec2, start: Vec2, end: Floa
     var stepsRemaining: Int = 2 * Int(end / step);
     
     // loop until path goes past the end value or allowable steps have been exhausted
-    while (path.last.x < end && stepsRemaining > 0) {
+    while (path.last!.x < end && stepsRemaining > 0) {
         // lower stepsRemaining
         stepsRemaining -= 1;
         
@@ -31,8 +31,8 @@ func genStreamline(flowpoints: [FlowPoint], stream: Vec2, start: Vec2, end: Floa
             let strength = flowpoint.strength * _screenscale * _screenscale;
             
             // calculate distance
-            let xDistance: Float64 = path.last.x - flowpoint.x;
-            let yDistance: Float64 = path.last.y - flowpoint.y;
+            let xDistance: Float64 = path.last!.x - flowpoint.position.x;
+            let yDistance: Float64 = path.last!.y - flowpoint.position.y;
             
             // calculate denominator
             let denominator: Float64 = 2 * Float64.pi * ( xDistance * xDistance + yDistance * yDistance);
@@ -51,18 +51,18 @@ func genStreamline(flowpoints: [FlowPoint], stream: Vec2, start: Vec2, end: Floa
         
         // Check for bad numbers in math. if there is, take a false step and print a warning
         if (xVelocity.isInfinite || yVelocity.isInfinite || xVelocity.isNaN || yVelocity.isNaN) {
-            print("Warning: math at \(path.last.x), \(path.last.y) broke. Taking false step forward of size \(step).");
-            path.append(Vec2(x: path.last.x + step, y: path.last.y));
+            print("Warning: math at \(path.last!.x), \(path.last!.y) broke. Taking false step forward of size \(step).");
+            path.append(Vec2(x: path.last!.x + step, y: path.last!.y));
             continue;
         } else {
             // else take true step
-            path.append(Vec2(x: path.last.x + xVelocity, y: path.last.y + yVelocity));
+            path.append(Vec2(x: path.last!.x + xVelocity, y: path.last!.y + yVelocity));
         }
         
         // check for stagnet movement by taking the delta over the last 9 steps
         if (path.count % 10 == 9){
-            if (abs(path.last.x - path[path.count - 9].x) < step &&
-                abs(path.last.y - path[path.count - 9].y) < step) {
+            if (abs(path.last!.x - path[path.count - 9].x) < step &&
+                abs(path.last!.y - path[path.count - 9].y) < step) {
                 break;
             }
         }
