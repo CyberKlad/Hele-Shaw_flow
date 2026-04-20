@@ -17,12 +17,8 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var gridView: HeleShawGrid!
-    // these arent being used
-//    @IBOutlet weak var sourceButton: UIButton!
-//    @IBOutlet weak var sinkButton: UIButton!
-//    @IBOutlet weak var playpauseButton: UIButton!
-//    @IBOutlet weak var clearButton: UIButton!
-    
+    @IBOutlet weak var sourceButton: UIButton!
+    @IBOutlet weak var sinkButton: UIButton!
     var isPaused = true;
     var placeMode: PlaceMode = .none
     @IBOutlet weak var slider: UISlider!
@@ -33,7 +29,7 @@ class ViewController: UIViewController {
         slider.minimumValue = 0
         slider.maximumValue = 100
         
-        gridView.cols = 12
+        gridView.cols = 12 
         gridView.rows = 8
         gridView.radius = 5
         gridView.setNeedsDisplay();
@@ -45,10 +41,20 @@ class ViewController: UIViewController {
         gridView.isUserInteractionEnabled = true
     }
     
-    
-    @IBAction func sourceButtonPressed(_ sender: Any) {
+    func updateButtonSelect(selected: UIButton)
+    {
+        let buttons = [sourceButton, sinkButton]
+        for button in buttons{
+            button?.isSelected = false
+            button?.backgroundColor = .systemGray
+        }
+        selected.isSelected = true
+        selected.backgroundColor = .systemCyan
+    }
+    @IBAction func sourceButtonPressed(_ sender: UIButton) {
         print("source PRESSED")
         placeMode = .source
+        updateButtonSelect(selected: sender)
     }
     
     @IBAction func playButtonPressed(_ sender: UIButton){
@@ -58,12 +64,12 @@ class ViewController: UIViewController {
         }
         else {
             sender.setTitle("Pause", for:.normal)
-        }
+        } 
         gridView.isPaused = isPaused
-        gridView.setNeedsDisplay()
+        gridView.setNeedsDisplay() 
     }
     
-    @IBAction func sinkButtonPressed(_ sender: Any) {
+    @IBAction func sinkButtonPressed(_ sender: UIButton) {
         print("sink pressed")
         placeMode = .sink
         gridView.isUserInteractionEnabled = true
@@ -73,7 +79,7 @@ class ViewController: UIViewController {
         
         slider.addTarget(self, action: #selector(sliderChange(_:)), for: .valueChanged)
         slider.addTarget(self, action: #selector(sliderChange(_:)), for: .valueChanged)
-        
+        updateButtonSelect(selected: sender)
         
     }
     
