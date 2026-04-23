@@ -19,23 +19,24 @@ class ViewController: UIViewController {
     @IBOutlet weak var gridView: HeleShawGrid!
     @IBOutlet weak var sourceButton: UIButton!
     @IBOutlet weak var sinkButton: UIButton!
-    var isPaused = true;
-    var placeMode: PlaceMode = .none
-    var showPercent = false
+    // var isPaused = false;
+    var placeMode: PlaceMode = .source;
+    var showPercent = true;
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var ValueLable: UILabel!
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        slider.minimumValue = 0
-        slider.maximumValue = 100
+        super.viewDidLoad();
+        slider.isContinuous = false;
+        slider.minimumValue = 0;
+        slider.maximumValue = 100;
         
-        gridView.cols = 12 
-        gridView.rows = 8
-        gridView.radius = 5
+        gridView.cols = 12;
+        gridView.rows = 8;
+        gridView.radius = 5;
         gridView.setNeedsDisplay();
         
-        ValueLable.text="\(Int (slider.value))mm²/s"
+        ValueLable.text="\(Int (slider.value))%";
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(gridPress(_:)))
         gridView.addGestureRecognizer(tapGesture)
@@ -51,31 +52,33 @@ class ViewController: UIViewController {
         let buttons = [sourceButton, sinkButton]
         for button in buttons{
             button?.isSelected = false
-            button?.backgroundColor = .systemGray
+            button?.tintColor = .systemGray
         }
         selected.isSelected = true
-        selected.backgroundColor = .systemCyan
+        selected.tintColor = .systemCyan
     }
+    
     @IBAction func sourceButtonPressed(_ sender: UIButton) {
-        print("source PRESSED")
+        //print("source PRESSED")
         placeMode = .source
         updateButtonSelect(selected: sender)
     }
     
-    @IBAction func playButtonPressed(_ sender: UIButton){
-        isPaused.toggle()
-        if isPaused {
-            sender.setTitle("Play", for:.normal)
-        }
-        else {
-            sender.setTitle("Pause", for:.normal)
-        } 
-        gridView.isPaused = isPaused
-        gridView.setNeedsDisplay() 
-    }
+    // unused now
+//    @IBAction func playButtonPressed(_ sender: UIButton){
+//        isPaused.toggle()
+//        if isPaused {
+//            sender.setTitle("Play", for:.normal)
+//        }
+//        else {
+//            sender.setTitle("Pause", for:.normal)
+//        } 
+//        gridView.isPaused = isPaused
+//        gridView.setNeedsDisplay() 
+//    }
     
     @IBAction func sinkButtonPressed(_ sender: UIButton) {
-        print("sink pressed")
+        //print("sink pressed")
         placeMode = .sink
         gridView.isUserInteractionEnabled = true
         
@@ -110,6 +113,10 @@ class ViewController: UIViewController {
     }
 
     
+    @IBAction func undoButtonPressed(_ sender: Any) {
+        gridView.sources.removeLast();
+    }
+    
     @objc func gridPress(_ gesture: UITapGestureRecognizer) {
         let point = gesture.location(in: gridView)
         let x_space = gridView.bounds.width / CGFloat(gridView.cols + 1)
@@ -120,19 +127,21 @@ class ViewController: UIViewController {
             return
         }
         
-        let place = gridView.gridPoint(col: col, row: row)
+        // let place = gridView.gridPoint(col: col, row: row)
         //let x = place.0
         //let y = place.1
         
         let x: Float64 = point.x
         let y: Float64 = point.y
-        let q: Float64 = Float64(slider.value)
-        if(placeMode == .sink){
-            gridView.sinks.append((x,y,q))
+        var q: Float64 = 0.0;
+        if Float64(slider.value) != 0.0 {
+            if placeMode == .source {
+                q = Float64(slider.value);
+            } else if placeMode == .sink {
+                q = -Float64(slider.value);
+            }
         }
-        else if(placeMode == .source){
-            gridView.sources.append((x,y,q))
-        }
+        gridView.sources.append((x,y,q))
         gridView.setNeedsDisplay()
     }
 }

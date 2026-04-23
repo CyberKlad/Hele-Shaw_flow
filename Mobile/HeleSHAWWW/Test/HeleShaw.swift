@@ -13,7 +13,7 @@ class HeleShawGrid: UIView {
     var rows: Int = 10
     var radius: CGFloat = 5
 
-    var isPaused: Bool = true
+    var isPaused: Bool = false;
     var sources: [(Float64, Float64, Float64)] = []
     var sinks: [(Float64, Float64, Float64)] = []
     
@@ -28,9 +28,7 @@ class HeleShawGrid: UIView {
 
         drawBackgroundGrid(context: context!)
         drawPoints(context: context!)
-        if !isPaused {
-            drawStreamlines()
-        }
+        drawStreamlines();
     }
     
     // this redraws when screen is rotated so that distortion doesnt happen
@@ -66,22 +64,26 @@ class HeleShawGrid: UIView {
     func drawPoints(context: CGContext){
         var newRadius: CGFloat = radius;
         
-        UIColor.blue.setFill()
         for source in sources {
+            if source.2 >= 0 {
+                UIColor.blue.setFill()
+            } else {
+                UIColor.red.setFill()
+            }
             newRadius = radius * source.2 * 0.05;
             let x = CGFloat(source.0)
             let y = CGFloat(source.1)
             let circlePoint = CGRect(x: x - newRadius, y: y - newRadius, width: newRadius*2, height: newRadius*2)
             context.fillEllipse(in: circlePoint)
         }
-        UIColor.red.setFill()
-        for sink in sinks {
-            newRadius = radius * sink.2 * 0.05;
-            let x  = CGFloat(sink.0)
-            let y = CGFloat(sink.1)
-            let circlePoint = CGRect(x: x - newRadius, y: y - newRadius, width: newRadius*2, height: newRadius*2)
-            context.fillEllipse(in: circlePoint)
-        }
+//        UIColor.red.setFill()
+//        for sink in sinks {
+//            newRadius = radius * sink.2 * 0.05;
+//            let x  = CGFloat(sink.0)
+//            let y = CGFloat(sink.1)
+//            let circlePoint = CGRect(x: x - newRadius, y: y - newRadius, width: newRadius*2, height: newRadius*2)
+//            context.fillEllipse(in: circlePoint)
+//        }
     }
 //function used to draw sources and sinks only on grid points, not sure if we need that or not
     func gridPoint(col: Int, row: Int) -> (Float64, Float64) {
