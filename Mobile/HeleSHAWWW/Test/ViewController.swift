@@ -21,6 +21,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var sinkButton: UIButton!
     var isPaused = true;
     var placeMode: PlaceMode = .none
+    var showPercent = false
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var ValueLable: UILabel!
     
@@ -39,6 +40,10 @@ class ViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(gridPress(_:)))
         gridView.addGestureRecognizer(tapGesture)
         gridView.isUserInteractionEnabled = true
+        
+        let valueTap = UITapGestureRecognizer(target: self, action: #selector(sliderChange(_:)))
+        ValueLable.isUserInteractionEnabled = true
+        ValueLable.addGestureRecognizer(valueTap)
     }
     
     func updateButtonSelect(selected: UIButton)
@@ -85,7 +90,16 @@ class ViewController: UIViewController {
     
     
     @IBAction func sliderChange(_ sender: Any) {
-        ValueLable.text="\(Int (slider.value))mm²/s"
+        if sender is UITapGestureRecognizer{
+            showPercent.toggle()
+        }
+        let value = Int(slider.value)
+        if showPercent{
+            ValueLable.text = "\(value)%"
+        }
+        else{
+            ValueLable.text="\(Int (slider.value))mm²/s"
+        }
     }
     
     @IBAction func clearButtonPressed(_ sender: Any) {
